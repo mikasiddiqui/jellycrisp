@@ -1,0 +1,23 @@
+* {
+    font-family: 'Cherry Bomb One';
+    background: #fdf9ee !important;
+    background-color: #fdf9ee !important;
+
+}
+
+a {
+    text-decoration:none !important;
+    color: #4a473d !important;
+}
+
+a:hover {
+    opacity: 0.7;
+}
+
+a:active {
+    opacity: 1;
+  }
+
+  .rounded-custom {
+    border-radius:2rem!important
+}
