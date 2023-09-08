@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <title>Jellycrisp - App</title>
+    <title>Jellycrisp - Add a model</title>
     <meta name="description" content="Jellycrisp App - Create a project">
     <meta name="keywords" content="jellycrisp ai machine learning ml huggingface saas">
     <meta charset="utf-8">
@@ -21,35 +21,51 @@
         </a>  
     </nav>      
     <div class="container">
-        <h1 class="text-center" style="color:#4a473d !important;">Get started by adding a model:</h1>
+        <h1 class="text-center" style="color:#4a473d !important;">Choose your model input option:</h1>
         <div class="row">
 
-            <div class="col-sm-6">
-            <a href="/models">
-                <div class="shadow-sm card rounded-custom mt-5">
-                    <div class="card-body rounded-custom m-3">
-                        <center>
-                            <i class="fa-solid fa-square-plus fa-3x" style="color: #DBC6EB;"aria-hidden="true"></i>
-                        </center>
-                        <h4 class="card-title text-center">Add a model</h4>
-                    </div>
-                </div>
-            </a>
-            </div>
-
-            <div class="col-sm-6">
+            <div class="col-sm-4">
             <a href="#">
                 <div class="shadow-sm card rounded-custom mt-5">
                     <div class="card-body rounded-custom m-3">
                         <center>
-                            <i class="fa fa-rocket fa-3x" style="color: #D1EAA3;" aria-hidden="true"></i>
+                            <i class="fa-solid fa-gear fa-3x mb-2" style="color: #FF9B9B;"aria-hidden="true"></i>
                         </center>
-                        <h4 class="card-title text-center">Create a project</h4>
+                        <h4 class="card-title text-center">Jellytrain Auto-Trainer</h4>
+                        <p class="text-center">Simply upload your dataset and auto-train a multi-modal model.</p>
                     </div>
                 </div>
             </a>
             </div>
 
+            <div class="col-sm-4">
+            <a href="/models/hf">
+                <div class="shadow-sm card rounded-custom mt-5">
+                    <div class="card-body rounded-custom m-3">
+                        <center>
+                            <i class="fa fa-solid fa-face-smiling-hands fa-3x mb-2" style="color: #FFD966;" aria-hidden="true"></i>
+                        </center>
+                        <h4 class="card-title text-center">Huggingface Model</h4>
+                        <p class="text-center">Input the Huggingface path to your model.</p>
+
+                    </div>
+                </div>
+            </a>
+            </div>
+            <div class="col-sm-4">
+                <a href="#">
+                    <div class="shadow-sm card rounded-custom mt-5">
+                        <div class="card-body rounded-custom m-3">
+                            <center>
+                                <i class="fa-brands fa-python fa-3x mb-2" style="color: #6096B4;" aria-hidden="true"></i>
+                            </center>
+                            <h4 class="card-title text-center">Upload via Python </h4>
+                            <p class="text-center">Use the <kbd class="bg-warning">jellycrisp</kbd> package on python to upload your model.</p>
+    
+                        </div>
+                    </div>
+                </a>
+            </div>
         </div>
       </div>
 

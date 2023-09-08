@@ -12,6 +12,7 @@ a {
 
 a:hover {
     opacity: 0.7;
+    transition: opacity 0.2s, visibility 0.2s;
 }
 
 a:active {
@@ -20,4 +21,10 @@ a:active {
 
   .rounded-custom {
     border-radius:2rem!important
+}
+
+.custom-btn {
+    background: #D1EAA3 !important;
+    background-color: #D1EAA3 !important;
+    border-color: #52575D !important;
 }
