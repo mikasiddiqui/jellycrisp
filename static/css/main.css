@@ -19,7 +19,7 @@ a:active {
     opacity: 1;
   }
 
-  .rounded-custom {
+.rounded-custom {
     border-radius:2rem!important
 }
 
@@ -28,3 +28,4 @@ a:active {
     background-color: #D1EAA3 !important;
     border-color: #52575D !important;
 }
+
