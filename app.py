@@ -1,5 +1,6 @@
 import os
 import pathlib
+import re
 
 import requests
 from flask import Flask, session, abort, redirect, request, render_template
@@ -89,6 +90,27 @@ def models():
 @app.route("/models/hf")
 def hf():
     return render_template("huggingface.html")
+
+def check_hf_value(model, token):
+    if token == '':
+        API_TOKEN = 'hf_'
+    else:
+        API_TOKEN = token
+    API_URL = 'https://api-inference.huggingface.co/models/{}'.format(str(model).lower())
+    headers = {"Authorization": f"Bearer {API_TOKEN}"}
+    response = requests.request("GET", API_URL, headers=headers, data=data)
+    output = json.loads(response.content.decode("utf-8"))
+    if 'error' in output:
+        return output['error']
+    return output['id']
+
+@app.route("/models/hf/result", methods= ['POST', 'GET'])
+def hf_result():
+    model = request.form.get('model')
+    token = request.form.get('token')
+    result = check_hf_value(model, token)
+    return render_template("hf_result.html", result=result)
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=80, debug=True)
