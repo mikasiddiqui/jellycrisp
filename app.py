@@ -3,7 +3,7 @@ import pathlib
 import re
 
 import requests
-from flask import Flask, session, abort, redirect, request, render_template, url_for
+from flask import Flask, session, abort, redirect, request, render_template, url_for, flash, get_flashed_messages
 from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
 from pip._vendor import cachecontrol
@@ -120,9 +120,9 @@ def protected_area():
 def models():
     return render_template("models.html")
 
-@app.route("/models/hf")
-def hf():
-    return render_template("huggingface.html")
+# @app.route("/models/hf")
+# def hf():
+#     return render_template("huggingface.html")
 
 def check_hf_value(model, token, google_id):
     if token == '':
@@ -135,12 +135,12 @@ def check_hf_value(model, token, google_id):
     output = json.loads(response.content.decode("utf-8"))
     model_exists = check_model_exists(model, google_id)
     if 'error' in output:
-        return output['error']
+        return [0, output['error']]
     elif model_exists:
-        return "Model already added"
+        return [1, "Model already added"]
     else:
         add_hf_model(model, token, google_id)
-        return "Model added"
+        return [2, "Model added"]
 
 def add_hf_model(model, token, google_id):
     if token == '':
@@ -175,14 +175,20 @@ def check_model_exists(model, google_id):
         return True
     return False
 
-@app.route("/models/hf/result", methods= ['POST', 'GET'])
+@app.route("/huggingface", methods= ['POST', 'GET'])
 def hf_result():
-    model = request.form.get('model')
-    token = request.form.get('token')
-    google_id = session["google_id"]
-    result = check_hf_value(model, token, google_id)
-    return render_template("hf_result.html", result=result)
-
+    if request.method == 'POST':
+        model = request.form.get('model')
+        token = request.form.get('token')
+        google_id = session["google_id"]
+        result_code, result_message = check_hf_value(model, token, google_id)
+        if result_code <= 1:
+            flash('Error: {}'.format(result_message), 'error')
+        else:
+            flash('Success: {}'.format(result_message), 'success')
+            return redirect('home')
+        return redirect('huggingface')
+    return render_template('huggingface.html')
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=80, debug=True)
 

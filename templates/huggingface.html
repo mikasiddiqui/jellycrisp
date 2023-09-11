@@ -21,12 +21,45 @@
         </a>  
     </nav>      
     <div class="container">
+      {% with errors = get_flashed_messages(category_filter=["error"]) %}
+      {% if errors %}
+      <div class="alert alert-danger alert-dismissible fade show"
+           role="alert">
+          <ul>
+              {%- for msg in errors %}
+              <li>{{ msg }}</li>
+              {% endfor -%}
+          </ul>
+
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+      </div>
+      {% endif %}
+      {% endwith %}
+
+      {% with messages = get_flashed_messages(category_filter=["success"]) %}
+      {% if messages %}
+      <div class="alert alert-success alert-dismissible fade show"
+           role="alert">
+          <ul>
+              {%- for msg in messages %}
+              <li>{{ msg }}</li>
+              {% endfor -%}
+          </ul>
+
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+      {% endif %}
+      {% endwith %}
         <h1 class="text-center" style="color:#4a473d !important;">Input the Huggingface path to your model:</h1>
         <div class="row">
             <div class="col-sm-12">
                 <div class="shadow-sm card rounded-custom mt-5">
                     <div class="card-body rounded-custom m-3">
-                        <form method = "POST" action="/models/hf/result">
+                        <form method = "POST">
                             <div class="form-group row">
                               <label for="hfColForm" class="col-sm-2 col-form-label col-form-label-lg">Model Path</label>
                               <div class="col-sm-10">

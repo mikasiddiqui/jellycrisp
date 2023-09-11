@@ -1,8 +1,15 @@
 * {
     font-family: 'Cherry Bomb One';
-    background: #fdf9ee !important;
-    background-color: #fdf9ee !important;
 
+}
+
+body, input {
+    background: #fdf9ee !important;
+
+}
+
+.card {
+    background: #fdf9ee !important;
 }
 
 a {
