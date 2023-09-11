@@ -3,17 +3,33 @@ import pathlib
 import re
 
 import requests
-from flask import Flask, session, abort, redirect, request, render_template
+from flask import Flask, session, abort, redirect, request, render_template, url_for
 from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
 from pip._vendor import cachecontrol
 import google.auth.transport.requests
 import json
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import DateTime
+
+from sqlalchemy.sql import func
+import datetime
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+
 
 f = open('client_secret.json')
 data = json.load(f)
 
 app = Flask(__name__)
+
+app.config['SQLALCHEMY_DATABASE_URI'] =\
+        'sqlite:///' + os.path.join(basedir, 'database.db')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+
+
 app.secret_key = data['web']['client_secret']
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
@@ -26,7 +42,6 @@ flow = Flow.from_client_secrets_file(
     redirect_uri="http://localhost/callback"
 )
 
-
 def login_is_required(function):
     def wrapper(*args, **kwargs):
         if "google_id" not in session:
@@ -36,13 +51,11 @@ def login_is_required(function):
 
     return wrapper
 
-
 @app.route("/login")
 def login():
     authorization_url, state = flow.authorization_url()
     session["state"] = state
     return redirect(authorization_url)
-
 
 @app.route("/callback")
 def callback():
@@ -60,16 +73,37 @@ def callback():
         request=token_request,
         audience=GOOGLE_CLIENT_ID
     )
+    add_session_login(id_info.get('given_name'),id_info.get('family_name'),id_info.get('sub'))
 
     session["google_id"] = id_info.get("sub")
     session["name"] = id_info.get("name")
     return redirect("/home")
 
-
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
+
+class LoginSession(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    firstname = db.Column(db.String(100), nullable=False)
+    lastname = db.Column(db.String(100), nullable=False)
+    google_id = db.Column(db.String(100), nullable=False)
+    created_at = db.Column(db.DateTime(timezone=True),
+                           server_default=func.now())
+    def __repr__(self):
+        return f'<LoginSession {self.firstname}>'
+
+class HuggingFaceModel(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    google_id = db.Column(db.String(100), nullable=False)
+    model = db.Column(db.String(100), nullable=False)
+    token = db.Column(db.String(100), nullable=True)
+    created_at = db.Column(db.DateTime(timezone=True),
+                           server_default=func.now())
+    def __repr__(self):
+        return f'<HuggingFaceModel {self.model}>'
+
 
 @app.route("/")
 def index():
@@ -82,7 +116,6 @@ def protected_area():
 
     # return f"Hello {session['name']}! <br/> <a href='/logout'><button>Logout</button></a>"
 
-
 @app.route("/models")
 def models():
     return render_template("models.html")
@@ -91,7 +124,7 @@ def models():
 def hf():
     return render_template("huggingface.html")
 
-def check_hf_value(model, token):
+def check_hf_value(model, token, google_id):
     if token == '':
         API_TOKEN = 'hf_'
     else:
@@ -100,17 +133,56 @@ def check_hf_value(model, token):
     headers = {"Authorization": f"Bearer {API_TOKEN}"}
     response = requests.request("GET", API_URL, headers=headers, data=data)
     output = json.loads(response.content.decode("utf-8"))
+    model_exists = check_model_exists(model, google_id)
     if 'error' in output:
         return output['error']
-    return output['id']
+    elif model_exists:
+        return "Model already added"
+    else:
+        add_hf_model(model, token, google_id)
+        return "Model added"
+
+def add_hf_model(model, token, google_id):
+    if token == '':
+        hf_model_row = HuggingFaceModel(
+        google_id=google_id,
+        model=model,
+        )
+    else:
+        hf_model_row = HuggingFaceModel(
+        google_id=google_id,
+        model=model,
+        token=token
+        )
+    db.session.add(hf_model_row)
+    db.session.commit()
+
+def add_session_login(firstname, lastname, google_id):
+    session_login_row = LoginSession(
+        firstname=firstname, 
+        lastname=lastname,
+        google_id=google_id
+        )
+    db.session.add(session_login_row)
+    db.session.commit()
+
+def check_model_exists(model, google_id):
+    model_exists = HuggingFaceModel.query.filter_by(
+        google_id=google_id, 
+        model=model
+        )
+    if len(list(model_exists)) > 0:
+        return True
+    return False
 
 @app.route("/models/hf/result", methods= ['POST', 'GET'])
 def hf_result():
     model = request.form.get('model')
     token = request.form.get('token')
-    result = check_hf_value(model, token)
+    google_id = session["google_id"]
+    result = check_hf_value(model, token, google_id)
     return render_template("hf_result.html", result=result)
-
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=80, debug=True)
+

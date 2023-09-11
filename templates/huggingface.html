@@ -26,17 +26,27 @@
             <div class="col-sm-12">
                 <div class="shadow-sm card rounded-custom mt-5">
                     <div class="card-body rounded-custom m-3">
-                        <form>
+                        <form method = "POST" action="/models/hf/result">
                             <div class="form-group row">
                               <label for="hfColForm" class="col-sm-2 col-form-label col-form-label-lg">Model Path</label>
                               <div class="col-sm-10">
-                                <input type="text" class="form-control form-control-lg" id="hfColForm" placeholder="focia/keras-model" required>
+                                <input 
+                                type="text" 
+                                class="form-control form-control-lg" 
+                                id="hfColForm"
+                                name="model"
+                                placeholder="focia/keras-model" required>
                               </div>
                             </div>
                             <div class="form-group row">
                                 <label for="hfColFormToken" class="col-sm-2 col-form-label col-form-label-lg">Token (Optional)</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control form-control-lg" id="hfColFormToken" placeholder="hf_qXwvUTpLMOPNsinsJhynNABcDefGHiJkLM">
+                                    <input 
+                                    type="text" 
+                                    class="form-control form-control-lg" 
+                                    id="hfColFormToken" 
+                                    name="token"
+                                    placeholder="hf_qXwvUTpLMOPNsinsJhynNABcDefGHiJkLM">
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-warning custom-btn">Submit</button>
