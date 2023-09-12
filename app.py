@@ -112,7 +112,13 @@ def index():
 @app.route("/home")
 @login_is_required
 def protected_area():
-    return render_template("index.html")
+    first_name = session['name'].split(" ")[0]
+    num_models = get_num_models(session['google_id'])
+    return render_template(
+        "index.html", 
+        name=first_name, 
+        num_models=num_models
+    )
 
     # return f"Hello {session['name']}! <br/> <a href='/logout'><button>Logout</button></a>"
 
@@ -174,6 +180,11 @@ def check_model_exists(model, google_id):
     if len(list(model_exists)) > 0:
         return True
     return False
+
+def get_num_models(google_id):
+    models_query = HuggingFaceModel.query.filter_by(google_id=google_id)
+    num_models = len(list(models_query))
+    return num_models
 
 @app.route("/huggingface", methods= ['POST', 'GET'])
 def hf_result():

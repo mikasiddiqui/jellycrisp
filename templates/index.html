@@ -55,9 +55,13 @@
         {% endif %}
         {% endwith %}
   
-        <h1 class="text-center" style="color:#4a473d !important;">Get started by adding a model:</h1>
-        <div class="row">
+        {% if num_models == 0 %}
+            <h1 class="text-center" style="color:#4a473d !important;">Welcome {{ name }}, start by adding a model:</h1>
+        {% elif num_models > 0 %}
+            <h1 class="text-center" style="color:#4a473d !important;">Welcome {{ name }}, create a project:</h1>
+        {% endif %}
 
+        <div class="row mb-5">
             <div class="col-sm-6">
             <a href="/models">
                 <div class="shadow-sm card rounded-custom mt-5">
@@ -83,7 +87,58 @@
                 </div>
             </a>
             </div>
+        </div>
 
+        <h1 class="text-center" style="color:#4a473d !important;">Models & Projects</h1>
+        <div class="row mb-5">
+            <div class="col-sm-3">
+            <a href="#">
+                <div class="shadow-sm card rounded-custom mt-5">
+                    <div class="card-body rounded-custom m-3">
+                        <center>
+                            <h2 style="color: #cfb3e4;">{{ num_models }}</h2>
+                        </center>
+                        <h4 class="card-title text-center">Num models</h4>
+                    </div>
+                </div>
+            </a>
+            </div>
+            <div class="col-sm-3">
+            <a href="#">
+                <div class="shadow-sm card rounded-custom mt-5">
+                    <div class="card-body rounded-custom m-3">
+                        <center>
+                            <h2 style="color: #c7e58e;">0</h2>
+                        </center>
+                        <h4 class="card-title text-center">Num projects</h4>
+                    </div>
+                </div>
+            </a>
+            </div>
+            <div class="col-sm-3">
+                <a href="#">
+                    <div class="shadow-sm card rounded-custom mt-5">
+                        <div class="card-body rounded-custom m-3">
+                            <center>
+                                <h2 style="color: #ffd34d;">$0</h2>
+                            </center>
+                            <h4 class="card-title text-center">Total revenue</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-sm-3">
+                <a href="#">
+                    <div class="shadow-sm card rounded-custom mt-5">
+                        <div class="card-body rounded-custom m-3">
+                            <center>
+                                <h2 style="color: #6096B4;">0</h2>
+                            </center>
+                            <h4 class="card-title text-center">Total users</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
         </div>
       </div>
 
