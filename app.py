@@ -162,10 +162,12 @@ def projects():
             if input_name == None:
                 break
             else:
-                temp_out = [input_name, input_type, model, source]
+                temp_out = [input_name, model, input_type, source]
                 results.append(temp_out)
                 counter += 1
-        print(results)
+        for result in results:
+            add_project_row(result[0], result[1], result[2], result[3])
+            
     return render_template("projects.html", models=model_list, json_models=json_model_list)
 
 def check_hf_value(model, token, google_id):
@@ -210,6 +212,18 @@ def add_session_login(firstname, lastname, google_id):
         )
     db.session.add(session_login_row)
     db.session.commit()
+
+def add_project_row(input_name, model, input_type, source):
+    project_row_element = ProjectRow(
+        google_id=session["google_id"], 
+        input_name=input_name,
+        model=model,
+        input_type=input_type,
+        source=source
+        )
+    db.session.add(project_row_element)
+    db.session.commit()
+
 
 def check_model_exists(model, google_id):
     model_exists = HuggingFaceModel.query.filter_by(
