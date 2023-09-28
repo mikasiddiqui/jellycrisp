@@ -7,7 +7,8 @@ $(document).ready(function () {
 
         cols += '<td><input type="text" class="form-control" name="inputName' + counter + '"/></td>';
         cols += '<td><select class="form-control" id="selectModel' + counter + '"><option selected>Choose...</option><option>...</option></select></td>';
-        cols += '<td><input type="text" class="form-control" name="inputType' + counter + '"/></td>';
+        cols += '<td><select id="selectInput' + counter + '" class="form-control"><option selected>String</option><option>Integer</option><option>Image</option><option>Float</option><option>Boolean</option><option>List</option><option>Array</option><option>Tensor</option></select></td>';
+
         cols += '<td><select class="form-control" id="selectSource' + counter + '"><option selected>Choose...</option><option>User</option><option>Model</option></select></td>';
 
         cols += '<td><input type="button" class="ibtnDel btn btn-md btn-danger custom-btn"  value="Delete"></td>';

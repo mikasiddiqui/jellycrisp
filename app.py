@@ -48,7 +48,7 @@ def login_is_required(function):
             return abort(401)  # Authorization required
         else:
             return function()
-
+    wrapper.__name__ = function.__name__
     return wrapper
 
 @app.route("/login")
@@ -60,8 +60,14 @@ def login():
 @app.route("/callback")
 def callback():
     flow.fetch_token(authorization_response=request.url)
-    if not session["state"] == request.args["state"]:
-        abort(500)  # State does not match!
+    try:
+        if not session["state"] == request.args["state"]:
+            # abort(500)  # State does not match!
+            return redirect("/logout")
+    except:
+        return redirect("/logout")
+
+
 
     credentials = flow.credentials
     request_session = requests.session()
@@ -98,7 +104,7 @@ class HuggingFaceModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     google_id = db.Column(db.String(100), nullable=False)
     model = db.Column(db.String(100), nullable=False)
-    token = db.Column(db.String(100), nullable=True)
+    token = db.Column(db.String(100), nullable=False)
     created_at = db.Column(db.DateTime(timezone=True),
                            server_default=func.now())
     def __repr__(self):
@@ -123,21 +129,27 @@ def protected_area():
     # return f"Hello {session['name']}! <br/> <a href='/logout'><button>Logout</button></a>"
 
 @app.route("/models")
+@login_is_required
 def models():
     return render_template("models.html")
 
-# @app.route("/models/hf")
-# def hf():
-#     return render_template("huggingface.html")
+@app.route("/projects")
+@login_is_required
+def projects():
+    google_id = session["google_id"]
+    model_list = get_model_list(google_id)
+    json_model_list = json.dumps([x.model for x in model_list])
+    return render_template("projects.html", models=model_list, json_models=json_model_list)
 
 def check_hf_value(model, token, google_id):
-    if token == '':
-        API_TOKEN = 'hf_'
-    else:
-        API_TOKEN = token
+    # if token == '':
+    #     API_TOKEN = 'hf_'
+    # else:
+    #     API_TOKEN = token
+    API_TOKEN = token
     API_URL = 'https://api-inference.huggingface.co/models/{}'.format(str(model).lower())
     headers = {"Authorization": f"Bearer {API_TOKEN}"}
-    response = requests.request("GET", API_URL, headers=headers, data=data)
+    response = requests.request("GET", API_URL, headers=headers)
     output = json.loads(response.content.decode("utf-8"))
     model_exists = check_model_exists(model, google_id)
     if 'error' in output:
@@ -181,12 +193,18 @@ def check_model_exists(model, google_id):
         return True
     return False
 
-def get_num_models(google_id):
+def get_model_list(google_id):
     models_query = HuggingFaceModel.query.filter_by(google_id=google_id)
-    num_models = len(list(models_query))
+    models_list = list(models_query)
+    return models_list
+
+def get_num_models(google_id):
+    models_query = get_model_list(google_id)
+    num_models = len(models_query)
     return num_models
 
 @app.route("/huggingface", methods= ['POST', 'GET'])
+@login_is_required
 def hf_result():
     if request.method == 'POST':
         model = request.form.get('model')

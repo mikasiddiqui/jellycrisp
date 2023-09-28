@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Jellycrisp - Projects</title>
+    <meta name="description" content="Jellycrisp App - Create a project">
+    <meta name="keywords" content="jellycrisp ai machine learning ml huggingface saas">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Jellycrisp">
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}">    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/all.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cherry Bomb One">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  </head>
+  <body>
+    <nav class="nav">
+        <a href="/home">
+            <img class="ml-3 mt-2 mb-4" src="{{ url_for('static', filename='images/logo.png') }}" height="120" id=logo alt="Jellycrisp" />  
+        </a>  
+    </nav>      
+    <div class="container">
+        <h1 class="text-center" style="color:#4a473d !important;">Projects</h1>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="shadow-sm card rounded-custom mt-5">
+                    <div class="card-body rounded-custom m-3">
+                      <table id="myTable" class=" table order-list">
+                        <thead>
+                            <tr>
+                                <td>Input Name</td>
+                                <td>Model</td>
+                                <td>Type</td>
+                                <td>Source</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="col-sm-2">
+                                  <input type="text" class="form-control" id="inputName">
+                                </td>
+                                <td class="col-sm-4">
+                                  <select id="selectModel" class="form-control">
+                                    <option selected>Choose...</option>
+                                    {% for model in models %}
+                                      <option>{{ model.model }}</option>
+                                    {% endfor %}
+                                  </select>
+                                </td>
+                                <td class="col-sm-2">
+                                  <select id="selectInput" class="form-control">
+                                    <option selected>String</option>
+                                    <option>Integer</option>
+                                    <option>Image</option>
+                                    <option>Float</option>
+                                    <option>Boolean</option>
+                                    <option>List</option>
+                                    <option>Array</option>
+                                    <option>Tensor</option>
+                                  </select>
+                                </td>
+                                <td>
+                                  <select id="selectSource" class="form-control">
+                                    <option selected>Choose...</option>
+                                    <option>User</option>
+                                    {% for model in models %}
+                                      <option>{{ model.model }}</option>
+                                    {% endfor %}
+                                  </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="5" style="text-align: left;">
+                                    <input type="button" class="btn btn-lg btn-block custom-btn" id="addrow" value="Add Row" />
+                                </td>
+                            </tr>
+                            <tr>
+                            </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <!-- <script src="{{ url_for('static', filename='js/row.js') }}"></script> -->
+    <script>
+      $(document).ready(function () {
+          var counter = 0;
+
+          $("#addrow").on("click", function () {
+              var newRow = $("<tr>");
+              var cols = "";
+
+              cols += '<td><input type="text" class="form-control" name="inputName' + counter + '"/></td>';
+              cols += '<td><select class="form-control" id="selectModel' + counter + '"><option selected>Choose...</option>';
+              
+              var arr = {{ json_models | safe}}; 
+
+              for (var i = 0; i < arr.length; i++){
+                cols += '<option>' + arr[i] + '</option>';
+              }
+              cols += '</select></td>';
+              cols += '<td><select id="selectInput' + counter + '" class="form-control"><option selected>String</option><option>Integer</option><option>Image</option><option>Float</option><option>Boolean</option><option>List</option><option>Array</option><option>Tensor</option></select></td>';
+
+              cols += '<td><select class="form-control" id="selectSource' + counter + '"><option selected>Choose...</option><option>User</option>';
+              for (var i = 0; i < arr.length; i++){
+                cols += '<option>' + arr[i] + '</option>';
+              }
+              cols += '</select></td>';
+              cols += '<td><input type="button" class="ibtnDel btn btn-md btn-danger custom-btn"  value="Delete"></td>';
+              newRow.append(cols);
+              $("table.order-list").append(newRow);
+              counter++;
+          });
+
+
+
+          $("table.order-list").on("click", ".ibtnDel", function (event) {
+              $(this).closest("tr").remove();       
+              counter -= 1
+          });
+
+
+      });
+
+
+
+      function calculateRow(row) {
+          var price = +row.find('input[name^="price"]').val();
+
+      }
+
+      function calculateGrandTotal() {
+          var grandTotal = 0;
+          $("table.order-list").find('input[name^="price"]').each(function () {
+              grandTotal += +$(this).val();
+          });
+          $("#grandtotal").text(grandTotal.toFixed(2));
+      }
+    </script>
+    <!-- <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+  </body>
+</html>
