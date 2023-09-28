@@ -110,7 +110,7 @@ class HuggingFaceModel(db.Model):
     def __repr__(self):
         return f'<HuggingFaceModel {self.model}>'
 
-class ProjectRow(db.Model):
+class ProjectInputs(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     google_id = db.Column(db.String(100), nullable=False)
     input_name = db.Column(db.String(100), nullable=False)
@@ -120,7 +120,7 @@ class ProjectRow(db.Model):
     created_at = db.Column(db.DateTime(timezone=True),
                            server_default=func.now())
     def __repr__(self):
-        return f'<ProjectRow {self.model}>'
+        return f'<ProjectInputs {self.model}>'
 
 @app.route("/")
 def index():
@@ -165,8 +165,8 @@ def projects():
                 temp_out = [input_name, model, input_type, source]
                 results.append(temp_out)
                 counter += 1
-        for result in results:
-            add_project_row(result[0], result[1], result[2], result[3])
+        # for result in results:
+        #     add_project_row(result[0], result[1], result[2], result[3])
             
     return render_template("projects.html", models=model_list, json_models=json_model_list)
 
@@ -213,15 +213,15 @@ def add_session_login(firstname, lastname, google_id):
     db.session.add(session_login_row)
     db.session.commit()
 
-def add_project_row(input_name, model, input_type, source):
-    project_row_element = ProjectRow(
+def add_project_inputs(input_name, model, input_type, source):
+    project_inputs = ProjectInputs(
         google_id=session["google_id"], 
         input_name=input_name,
         model=model,
         input_type=input_type,
         source=source
         )
-    db.session.add(project_row_element)
+    db.session.add(project_inputs)
     db.session.commit()
 
 
