@@ -150,7 +150,12 @@ def projects():
     google_id = session["google_id"]
     model_list = get_model_list(google_id)
     json_model_list = json.dumps([x.model for x in model_list])
+            
+    return render_template("projects.html", models=model_list, json_models=json_model_list)
 
+@app.route("/projects/test", methods=['POST','GET'])
+@login_is_required
+def projects_test():
     if request.method == 'POST':
         results = []
         counter = 0
@@ -165,10 +170,10 @@ def projects():
                 temp_out = [input_name, model, input_type, source]
                 results.append(temp_out)
                 counter += 1
+        print(results)
         # for result in results:
         #     add_project_row(result[0], result[1], result[2], result[3])
-            
-    return render_template("projects.html", models=model_list, json_models=json_model_list)
+    return render_template("test.html")
 
 def check_hf_value(model, token, google_id):
     # if token == '':
