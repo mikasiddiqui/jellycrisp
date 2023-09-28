@@ -26,6 +26,7 @@
             <div class="col-sm-12">
                 <div class="shadow-sm card rounded-custom mt-5">
                     <div class="card-body rounded-custom m-3">
+                      <form method = "POST">
                       <table id="myTable" class=" table order-list">
                         <thead>
                             <tr>
@@ -38,18 +39,19 @@
                         <tbody>
                             <tr>
                                 <td class="col-sm-2">
-                                  <input type="text" class="form-control" id="inputName">
+                                  <input type="text" class="form-control" id="inputName0" name="inputName0" required>
                                 </td>
                                 <td class="col-sm-4">
-                                  <select id="selectModel" class="form-control">
-                                    <option selected>Choose...</option>
-                                    {% for model in models %}
+                                  <select id="selectModel0" class="form-control" name="selectModel0" required>
+                                    <optgroup label="Choose..." selected>
+                                      {% for model in models %}
                                       <option>{{ model.model }}</option>
                                     {% endfor %}
                                   </select>
                                 </td>
                                 <td class="col-sm-2">
-                                  <select id="selectInput" class="form-control">
+                                  <select id="selectInput0" class="form-control" name="selectInput0" required>
+                                    <optgroup label="Choose..." selected>
                                     <option selected>String</option>
                                     <option>Integer</option>
                                     <option>Image</option>
@@ -61,8 +63,8 @@
                                   </select>
                                 </td>
                                 <td>
-                                  <select id="selectSource" class="form-control">
-                                    <option selected>Choose...</option>
+                                  <select id="selectSource0" class="form-control" name="selectSource0" required>
+                                    <optgroup label="Choose..." selected>
                                     <option>User</option>
                                     {% for model in models %}
                                       <option>{{ model.model }}</option>
@@ -81,6 +83,8 @@
                             </tr>
                         </tfoot>
                       </table>
+                      <button type="submit" class="btn btn-warning custom-btn">Submit</button>
+                      </form>
                     </div>
                 </div>
             </div>
@@ -94,14 +98,14 @@
     <!-- <script src="{{ url_for('static', filename='js/row.js') }}"></script> -->
     <script>
       $(document).ready(function () {
-          var counter = 0;
+          var counter = 1;
 
           $("#addrow").on("click", function () {
               var newRow = $("<tr>");
               var cols = "";
 
-              cols += '<td><input type="text" class="form-control" name="inputName' + counter + '"/></td>';
-              cols += '<td><select class="form-control" id="selectModel' + counter + '"><option selected>Choose...</option>';
+              cols += '<td><input type="text" class="form-control" name="inputName' + counter + '" required/></td>';
+              cols += '<td><select class="form-control" id="selectModel' + counter + '" name="selectModel' + counter + '" required><optgroup label="Choose..." selected>';
               
               var arr = {{ json_models | safe}}; 
 
@@ -109,9 +113,9 @@
                 cols += '<option>' + arr[i] + '</option>';
               }
               cols += '</select></td>';
-              cols += '<td><select id="selectInput' + counter + '" class="form-control"><option selected>String</option><option>Integer</option><option>Image</option><option>Float</option><option>Boolean</option><option>List</option><option>Array</option><option>Tensor</option></select></td>';
+              cols += '<td><select id="selectInput' + counter + '" name="selectInput' + counter + '" class="form-control" required><optgroup label="Choose..." selected><option>String</option><option>Integer</option><option>Image</option><option>Float</option><option>Boolean</option><option>List</option><option>Array</option><option>Tensor</option></select></td>';
 
-              cols += '<td><select class="form-control" id="selectSource' + counter + '"><option selected>Choose...</option><option>User</option>';
+              cols += '<td><select class="form-control" id="selectSource' + counter + '" name="selectSource' + counter + '" required><optgroup label="Choose..." selected><option>User</option>';
               for (var i = 0; i < arr.length; i++){
                 cols += '<option>' + arr[i] + '</option>';
               }
@@ -132,20 +136,6 @@
 
       });
 
-
-
-      function calculateRow(row) {
-          var price = +row.find('input[name^="price"]').val();
-
-      }
-
-      function calculateGrandTotal() {
-          var grandTotal = 0;
-          $("table.order-list").find('input[name^="price"]').each(function () {
-              grandTotal += +$(this).val();
-          });
-          $("#grandtotal").text(grandTotal.toFixed(2));
-      }
     </script>
     <!-- <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>

@@ -110,6 +110,17 @@ class HuggingFaceModel(db.Model):
     def __repr__(self):
         return f'<HuggingFaceModel {self.model}>'
 
+class ProjectRow(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    google_id = db.Column(db.String(100), nullable=False)
+    input_name = db.Column(db.String(100), nullable=False)
+    model = db.Column(db.String(100), nullable=False)
+    input_type = db.Column(db.String(100), nullable=False)
+    source = db.Column(db.String(100), nullable=False)
+    created_at = db.Column(db.DateTime(timezone=True),
+                           server_default=func.now())
+    def __repr__(self):
+        return f'<ProjectRow {self.model}>'
 
 @app.route("/")
 def index():
@@ -133,12 +144,28 @@ def protected_area():
 def models():
     return render_template("models.html")
 
-@app.route("/projects")
+@app.route("/projects", methods= ['POST', 'GET'])
 @login_is_required
 def projects():
     google_id = session["google_id"]
     model_list = get_model_list(google_id)
     json_model_list = json.dumps([x.model for x in model_list])
+
+    if request.method == 'POST':
+        results = []
+        counter = 0
+        while True:
+            input_name = request.form.get('inputName' + str(counter))
+            input_type = request.form.get('selectInput' + str(counter))
+            model = request.form.get('selectModel' + str(counter))
+            source = request.form.get('selectSource' + str(counter))
+            if input_name == None:
+                break
+            else:
+                temp_out = [input_name, input_type, model, source]
+                results.append(temp_out)
+                counter += 1
+        print(results)
     return render_template("projects.html", models=model_list, json_models=json_model_list)
 
 def check_hf_value(model, token, google_id):
