@@ -21,11 +21,25 @@
         </a>  
     </nav>      
     <div class="container">
-        <h1 class="text-center" style="color:#4a473d !important;">Projects</h1>
-        <div class="row">
-            <div class="col-sm-12">
+        <h1 class="text-center" style="color:#4a473d !important;">Test your endpoints</h1>
+        <div class="d-flex justify-content-center">
+            <div class="p-2">
                 <div class="shadow-sm card rounded-custom mt-5">
                     <div class="card-body rounded-custom m-3">
+                        <table id="myTable" class="table vertical-align">
+                          <form>
+                            {% for item in results %}
+                              <tr class="d-flex">
+                                  <td class="col-sm-6 text-center">
+                                          {{ item[0] }}
+                                  </td>
+                                  <td class="col-sm-6">
+                                    <input type="text" class="form-control" id="inputName0" name="inputName0" required>
+                                  </td>
+                              </tr>
+                            {% endfor %}
+                          </form>
+                      </table>
                     </div>
                 </div>
             </div>

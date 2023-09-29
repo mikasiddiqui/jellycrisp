@@ -173,7 +173,7 @@ def projects_test():
         print(results)
         # for result in results:
         #     add_project_row(result[0], result[1], result[2], result[3])
-    return render_template("test.html")
+    return render_template("test.html", results=results)
 
 def check_hf_value(model, token, google_id):
     # if token == '':
