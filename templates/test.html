@@ -22,23 +22,39 @@
     </nav>      
     <div class="container">
         <h1 class="text-center" style="color:#4a473d !important;">Test your endpoints</h1>
+        <p class="text-center" style="color:#4a473d !important;">Enter test values for each input</p>
         <div class="d-flex justify-content-center">
             <div class="p-2">
-                <div class="shadow-sm card rounded-custom mt-5">
+                <div class="shadow-sm card rounded-custom mt-3">
                     <div class="card-body rounded-custom m-3">
                         <table id="myTable" class="table vertical-align">
-                          <form>
-                            {% for item in results %}
-                              <tr class="d-flex">
-                                  <td class="col-sm-6 text-center">
+                          <thead>
+                            <tr>
+                                <td>Input</td>
+                                <td>Value</td>
+                                <td>Test</td>
+                                <td>Result</td>
+                            </tr>
+                        </thead>
+                            <tbody>
+                            {% for item in user_results %}
+                            <form>
+                              <tr>
+                                  <td class="col-sm-2">
                                           {{ item[0] }}
                                   </td>
-                                  <td class="col-sm-6">
-                                    <input type="text" class="form-control" id="inputName0" name="inputName0" required>
+                                  <td class="col-sm-4">
+                                    <input type="text" class="form-control" id="inputValue" name="inputValue" required>
+                                    <input type="hidden" id="modelValue" name="modelValue" value="{{ item[1] }}">
+
                                   </td>
+                                  <td class="col-sm-2"><button type="submit" class="btn btn-warning custom-btn" id="test">Test</button></td>
+                                  <td class="col-sm-4"><p></p></td>
                               </tr>
+                            </form>
+
                             {% endfor %}
-                          </form>
+                            </tbody>
                       </table>
                     </div>
                 </div>
@@ -50,6 +66,26 @@
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script type=text/javascript>
+    
+    $(document).ready(function() {
+        $('#test').on('click', function(e) {
+          e.preventDefault();
+          var value = $("#inputValue").val();
+          var model = $("#modelValue").val();
+
+          console.log(value)
+          console.log(model)
+
+          $.getJSON('/background_process_test?'.concat("inputValue=".concat(encodeURIComponent(value))).concat("&modelValue=".concat(encodeURIComponent(model))),
+              function(data) {
+            //do nothing
+          });
+          return false;
+        });
+      });
+  </script>
+
     <!-- <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>

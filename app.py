@@ -171,9 +171,19 @@ def projects_test():
                 results.append(temp_out)
                 counter += 1
         print(results)
+        user_results = []
+        for result in results:
+            if result[3] == 'User':
+                user_results.append(result)
         # for result in results:
         #     add_project_row(result[0], result[1], result[2], result[3])
-    return render_template("test.html", results=results)
+    return render_template("test.html", user_results=user_results)
+
+@app.route('/background_process_test', methods=['POST','GET'])
+def background_process_test():
+    query = request.args.to_dict(flat=False)
+    print(query)
+    return ("Nothing")
 
 def check_hf_value(model, token, google_id):
     # if token == '':
