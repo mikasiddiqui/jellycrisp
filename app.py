@@ -1,7 +1,7 @@
 import os
 import pathlib
 import re
-
+import base64
 import requests
 from flask import Flask, session, abort, redirect, request, render_template, url_for, flash, get_flashed_messages
 from google.oauth2 import id_token
@@ -11,7 +11,8 @@ import google.auth.transport.requests
 import json
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import DateTime
-
+from PIL import Image
+import io
 from sqlalchemy.sql import func
 import datetime
 
@@ -162,18 +163,20 @@ def projects_test():
         while True:
             input_name = request.form.get('inputName' + str(counter))
             input_type = request.form.get('selectInput' + str(counter))
+            output_type = request.form.get('selectOutput' + str(counter))
+
             model = request.form.get('selectModel' + str(counter))
             source = request.form.get('selectSource' + str(counter))
             if input_name == None:
                 break
             else:
-                temp_out = [input_name, model, input_type, source]
+                temp_out = [input_name, model, input_type, output_type, source]
                 results.append(temp_out)
                 counter += 1
         print(results)
         user_results = []
         for result in results:
-            if result[3] == 'User':
+            if result[4] == 'User':
                 user_results.append(result)
         # for result in results:
         #     add_project_row(result[0], result[1], result[2], result[3])
@@ -182,8 +185,37 @@ def projects_test():
 @app.route('/background_process_test', methods=['POST','GET'])
 def background_process_test():
     query = request.args.to_dict(flat=False)
-    print(query)
-    return ("Nothing")
+    input_value = query['inputValue'][0]
+    model_value = query['modelValue'][0]
+    output_type = query['outputType'][0]
+    token = get_hf_token(model_value)
+    output = get_hf_output(input_value,model_value,token)
+    if output_type == 'Image':
+        if output.status_code == 200:
+            return json.dumps({"body" : "Image returned successfully"})
+        return json.dumps({"body" : "Image returned successfully"})
+    # return ("Nothing")
+    return output.content
+
+def gen_image_type(data):
+    # stream = io.BytesIO(data)
+    # img = Image.open(stream)
+    encoded_image = base64.b64encode(data)
+    return encoded_image
+
+def get_hf_output(value,model,token):
+    api_url = "https://api-inference.huggingface.co/models/{}".format(model)
+    headers = {"Authorization": f"Bearer {token}"}
+    response = requests.request("POST", api_url, headers=headers, data=value)
+    return response
+
+def get_hf_token(model):
+    result = HuggingFaceModel.query.filter_by(
+        google_id=session["google_id"], 
+        model=model
+        )
+    result_list = list(result)
+    return result_list[0].token
 
 def check_hf_value(model, token, google_id):
     # if token == '':

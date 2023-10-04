@@ -46,9 +46,10 @@
                                     <input type="text" class="form-control" id="inputValue{{n}}" name="inputValue{{n}}" required>
                                     <input type="hidden" id="modelValue{{n}}" name="modelValue{{n}}" value="{{ user_results[n][1] }}">
                                     <input type="hidden" id="listLength" name="listLength" value="{{ user_results| length }}">
+                                    <input type="hidden" id="outputType{{n}}" name="outputType{{n}}" value="{{ user_results[n][3] }}">
 
                                   </td>
-                                  <td class="col-sm-4"><p></p></td>
+                                  <td class="col-sm-4" id="result{{n}}"></td>
                               </tr>
                             {% endfor %}
                             </tbody>
@@ -75,11 +76,12 @@
           for (let i = 0; i < lengthNum; i++) {
             var value = $("#inputValue" + i).val();
             var model = $("#modelValue" + i).val();
-            console.log(value)
-            console.log(model)
-            $.getJSON('/background_process_test?'.concat("inputValue=".concat(encodeURIComponent(value))).concat("&modelValue=".concat(encodeURIComponent(model))),
+            var outputType = $("#outputType" + i).val();
+            $.getJSON('/background_process_test?'.concat("inputValue=".concat(encodeURIComponent(value))).concat("&modelValue=".concat(encodeURIComponent(model))).concat("&outputType=".concat(encodeURIComponent(outputType))),
               function(data) {
             //do nothing
+            $('#result'+i).prepend("<p>" + JSON.stringify(data) + "</p>");
+
           });
           }
           return false;

@@ -32,7 +32,8 @@
                             <tr>
                                 <td>Input Name</td>
                                 <td>Model</td>
-                                <td>Type</td>
+                                <td>Input Type</td>
+                                <td>Output Type</td>
                                 <td>Source</td>
                             </tr>
                         </thead>
@@ -41,7 +42,7 @@
                                 <td class="col-sm-2">
                                   <input type="text" class="form-control" id="inputName0" name="inputName0" required>
                                 </td>
-                                <td class="col-sm-4">
+                                <td class="col-sm-2">
                                   <select id="selectModel0" class="form-control" name="selectModel0" required>
                                     <optgroup label="Choose..." selected>
                                       {% for model in models %}
@@ -51,6 +52,19 @@
                                 </td>
                                 <td class="col-sm-2">
                                   <select id="selectInput0" class="form-control" name="selectInput0" required>
+                                    <optgroup label="Choose..." selected>
+                                    <option selected>String</option>
+                                    <option>Integer</option>
+                                    <option>Image</option>
+                                    <option>Float</option>
+                                    <option>Boolean</option>
+                                    <option>List</option>
+                                    <option>Array</option>
+                                    <option>Tensor</option>
+                                  </select>
+                                </td>
+                                <td class="col-sm-2">
+                                  <select id="selectOutput0" class="form-control" name="selectOutput0" required>
                                     <optgroup label="Choose..." selected>
                                     <option selected>String</option>
                                     <option>Integer</option>
@@ -114,6 +128,7 @@
               }
               cols += '</select></td>';
               cols += '<td><select id="selectInput' + counter + '" name="selectInput' + counter + '" class="form-control" required><optgroup label="Choose..." selected><option>String</option><option>Integer</option><option>Image</option><option>Float</option><option>Boolean</option><option>List</option><option>Array</option><option>Tensor</option></select></td>';
+              cols += '<td><select id="selectOutput' + counter + '" name="selectOutput' + counter + '" class="form-control" required><optgroup label="Choose..." selected><option>String</option><option>Integer</option><option>Image</option><option>Float</option><option>Boolean</option><option>List</option><option>Array</option><option>Tensor</option></select></td>';
 
               cols += '<td><select class="form-control" id="selectSource' + counter + '" name="selectSource' + counter + '" required><optgroup label="Choose..." selected><option>User</option>';
               for (var i = 0; i < arr.length; i++){
